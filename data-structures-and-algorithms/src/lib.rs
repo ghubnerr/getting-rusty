@@ -56,4 +56,16 @@ mod tests {
         quick_sort_rayon(&mut v);
         assert_eq!(v, vec![4, 5, 7, 312, 473]);
     }
+
+    #[test]
+    #[should_panic]
+    fn test_linkedlist() {
+        let mut ll = LinkedList::new();
+        ll.push_front(3);
+        ll.push_back(12);
+        ll.push_front(1);
+
+        println!("ll = {:?}", ll);
+        panic!();
+    }
 }
