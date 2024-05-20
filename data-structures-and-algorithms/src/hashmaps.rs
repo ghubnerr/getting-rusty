@@ -155,3 +155,10 @@ impl<K: Hash + Eq, V> HMap<K, V> {
         self.n_moved = 0;
     }
 }
+
+// Note :
+// BTreeMap   SORTED
+// fn insert< K: PartialOrd + Eq, V > (&mut self, k:Km,  v:V) {...}
+
+// BTreeSet
+// vfn insert< K: PartialOrd + Eq > (&mut self, k:Km) {...}
