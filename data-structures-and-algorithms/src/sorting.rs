@@ -80,7 +80,14 @@ fn pivot<T: PartialOrd>(v: &mut [T]) -> usize {
 }
 
 fn pivot_random<T: PartialOrd>(v: &mut [T]) -> usize {
+    if v.len() == 0 {
+        return 0;
+    }
+
     let mut p = crate::rand_gen::rand(v.len());
+    v.swap(0, p);
+    p = 0;
+
     for i in 1..v.len() {
         if v[i] < v[p] {
             v.swap(p + 1, i);

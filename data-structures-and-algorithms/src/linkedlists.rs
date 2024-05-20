@@ -17,7 +17,7 @@ impl<T: PartialOrd> LinkedList<T> {
                 let child: &mut LinkedList<T> = child;
                 child.push_back(data)
             }
-            None => self.push_back((data)),
+            None => self.0 = Some((data, Box::new(LinkedList(None)))),
         }
     }
 }

@@ -14,10 +14,6 @@ pub use linkedlists::*;
 pub use sorting::*;
 pub use stacks::*;
 
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -66,6 +62,32 @@ mod tests {
         ll.push_front(1);
 
         println!("ll = {:?}", ll);
+        panic!();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_bin_tree() {
+        let mut t = BinTree::new();
+        t.add_sorted(4);
+        t.add_sorted(44);
+        t.add_sorted(24);
+        t.add_sorted(6);
+        t.add_sorted(5);
+        t.add_sorted(47);
+        t.add_sorted(24);
+        t.print_lfirst(0);
+        panic!();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_bin_tree_balancing() {
+        let mut t = BinTree::new();
+        for i in 0..1e5 as i32 {
+            t.add_sorted(i);
+        }
+        t.print_lfirst(0);
         panic!();
     }
 }
