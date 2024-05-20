@@ -20,6 +20,7 @@ Just a place for all things Rust... for now
 │   ├── linkedlists.rs
 │   ├── rand_gen.rs
 │   ├── sorting.rs
+│   ├── hasher.rs
 │   └── stacks.rs
 └── target
     ├── CACHEDIR.TAG
@@ -35,6 +36,7 @@ Just a place for all things Rust... for now
 - Hashmaps (self-implemented) [`hashmaps.rs`](./data-structures-and-algorithms/src/hashmaps.rs)
 - LinkedLists and Doubly Linked Lists [`linkedlists.rs`](./data-structures-and-algorithms/src/linkedlists.rs)
 - Pseudo Random Number Generator [`rand_gen.rs`](./data-structures-and-algorithms/src/rand_gen.rs)
+- Hashing and Hasher [`hasher.rs`](./data-structures-and-algorithms/src/hasher.rs)
 - Sorting algorithms (Bubble, Merge and Quicksort) -- the latter has a thread-pool impl. [`sorting.rs`](./data-structures-and-algorithms/src/sorting.rs)
 - Stacks data structure [`stacks.rs`](./data-structures-and-algorithms/src/stacks.rs)
 
