@@ -1,5 +1,6 @@
 mod bst;
 mod dp;
+mod encoding;
 mod graphs;
 mod hashmaps;
 mod linkedlists;
@@ -8,6 +9,7 @@ mod sorting;
 mod stacks;
 
 pub use bst::*;
+pub use encoding::*;
 pub use graphs::*;
 pub use hashmaps::*;
 pub use linkedlists::*;
@@ -89,5 +91,17 @@ mod tests {
         }
         t.print_lfirst(0);
         panic!();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_huffman_encoding() {
+        let s = "at an apple app";
+        println!("{}", s);
+        let t = build_tree(s);
+        t.print_lfirst(0, '<');
+        println!("n = {:?}", t.encode_char('n'));
+        println!("ec = {:?}", t.encode_str(s));
+        panic!()
     }
 }
