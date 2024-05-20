@@ -35,7 +35,7 @@ Just a place for all things Rust... for now
 - Hashmaps (self-implemented)
 - LinkedLists and Doubly Linked Lists
 - Pseudo Random Number Generator
-- Sorting algorithms (Bubble, Merge and Quicksort) -- the latter has a thread-pool implementation for even faster performance
+- Sorting algorithms (Bubble, Merge and Quicksort) -- the latter has a thread-pool impl.
 - Stacks data structure
 
 ### Running Tests from `lib.rs`
