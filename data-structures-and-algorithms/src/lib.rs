@@ -1,3 +1,5 @@
+#![allow(unused, dead_code)]
+
 mod bst;
 mod dp;
 mod encoding;

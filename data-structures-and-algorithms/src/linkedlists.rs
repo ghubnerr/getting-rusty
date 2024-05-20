@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 #[derive(Debug)]
 pub struct LinkedList<T>(Option<(T, Box<LinkedList<T>>)>); // self.0
 
