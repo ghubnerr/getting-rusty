@@ -6,8 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-
-
-[[bin]]
-name = "data-structures-and-algorithms"
-path = "src/lib.rs"
+lazy_static = "1.4.0"
+rayon = "1.2.1"
