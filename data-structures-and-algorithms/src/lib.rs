@@ -4,6 +4,7 @@ mod bst;
 mod dp;
 mod encoding;
 mod graphs;
+mod hasher;
 mod hashmaps;
 mod linkedlists;
 mod rand_gen;
@@ -13,6 +14,7 @@ mod stacks;
 pub use bst::*;
 pub use encoding::*;
 pub use graphs::*;
+pub use hasher::*;
 pub use hashmaps::*;
 pub use linkedlists::*;
 pub use sorting::*;
@@ -164,5 +166,50 @@ mod tests {
         println!("{:?}", g);
         println!("greedy salesman = {:?},", g.greedy_salesman('A'));
         Ok(())
+    }
+
+    #[test]
+    fn test_get_right_values() {
+        let mut hm = HMap::new();
+        hm.insert("james".to_string(), 64);
+        hm.insert("gabe".to_string(), 53);
+        hm.insert("david".to_string(), 23);
+        hm.insert("laura".to_string(), 234);
+        hm.insert("danny".to_string(), 53);
+        hm.insert("pete".to_string(), 12);
+        hm.insert("andy".to_string(), 23);
+        hm.insert("mridul".to_string(), 42);
+        hm.insert("cole".to_string(), 11);
+        hm.insert("sarah".to_string(), 22);
+        hm.insert("abdul".to_string(), 33);
+        hm.insert("cymone".to_string(), 44);
+        hm.insert("geralt".to_string(), 77);
+        hm.insert("hello".to_string(), 88);
+        hm.insert("aaaa".to_string(), 99);
+
+        // same
+        hm.insert("david".to_string(), 23);
+
+        assert_eq!(hm.get("gabe"), Some(&53));
+        assert_eq!(hm.len(), 15);
+
+        println!("hm = {:?}", hm);
+    }
+
+    fn test_lots_of_numbers() {
+        let mut hm = HMap::new();
+        for x in 0..10000 {
+            hm.insert(x, x + 250);
+        }
+        assert_eq!(hm.len(), 10000);
+
+        assert_eq!(hm.get(&500), Some(&750));
+        for (n, x) in hm.main.buckets.iter().enumerate() {
+            assert!(x.len() < 10, "main bucket too big");
+        }
+
+        for (n, x) in hm.grow.buckets.iter().enumerate() {
+            assert!(x.len() < 10, "grow bucket too big");
+        }
     }
 }
