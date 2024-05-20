@@ -1,145 +1,119 @@
-#![allow(unused_variables, dead_code, unused_imports)]
-use bevy::prelude::*;
 use rand::prelude::*;
 use rusty_engine::prelude::*;
 
 #[derive(Resource)]
 struct GameState {
-    high_score: u32,
-    score: u32,
-    ferris_index: i32,
-    spawn_timer: Timer,
+    health_amount: u8,
+    lost: bool,
 }
 
-impl Default for GameState {
-    fn default() -> Self {
-        Self {
-            high_score: 0,
-            ferris_index: 0,
-            score: 0,
-            spawn_timer: Timer::from_seconds(1.0, TimerMode::Repeating),
-        }
-    }
-}
 fn main() {
     let mut game = Game::new();
 
-    game.audio_manager.play_music(MusicPreset::Classy8Bit, 0.2);
+    let player1 = game.add_sprite("player1", SpritePreset::RacingCarBlue);
+    player1.translation.x = -500.0;
+    player1.layer = 10.0;
+    player1.collision = true;
 
-    let player = game.add_sprite("player", SpritePreset::RacingCarBlue);
+    game.audio_manager
+        .play_music(MusicPreset::WhimsicalPopsicle, 0.2);
 
-    player.translation = Vec2::new(200.0, 200.0);
-    player.rotation = std::f32::consts::FRAC_PI_2; // "UP"
-    player.scale = 1.0;
-    player.collision = true;
+    for i in 0..10 {
+        let roadline = game.add_sprite(format!("roadline{}", i), SpritePreset::RacingBarrierWhite);
+        roadline.scale = 0.1;
+        roadline.translation.x = -600.0 + 150.0 * i as f32;
+    }
+    let obstacle_presets = vec![
+        SpritePreset::RacingBarrelBlue,
+        SpritePreset::RacingBarrelRed,
+        SpritePreset::RacingConeStraight,
+    ];
 
-    let score = game.add_text("score", "Score: 0");
-    score.translation = Vec2::new(520.0, 320.0);
+    let obstacle_files = vec![
+        "ferris.png", // Add the path to the ferris.png file
+    ];
 
-    let high_score = game.add_text("high_score", "High Score: 0");
-    high_score.translation = Vec2::new(-520.0, 320.0);
+    for (i, preset) in obstacle_presets.into_iter().enumerate() {
+        let obstacle = game.add_sprite(format!("obstacle{}", i), preset);
+        obstacle.layer = 5.0;
+        obstacle.collision = true;
+        obstacle.translation.x = thread_rng().gen_range(800.00..1600.00);
+        obstacle.translation.y = thread_rng().gen_range(-300.00..300.00);
+    }
 
-    // let ferris = game.add_sprite("ferris1", "ferris.png");
-    // ferris.translation = Vec2::new(100.0, 100.0);
-    // ferris.collision = true;
+    for (i, file) in obstacle_files.into_iter().enumerate() {
+        let obstacle = game.add_sprite(format!("obstacle_file{}", i), file);
+        obstacle.layer = 5.0;
+        obstacle.collision = true;
+        obstacle.scale = 0.1;
+        obstacle.translation.x = thread_rng().gen_range(800.00..1600.00);
+        obstacle.translation.y = thread_rng().gen_range(-300.00..300.00);
+    }
+
+    let health_message = game.add_text("health_message", "Health: 5");
+    health_message.translation = Vec2::new(550.0, 320.0);
+
     game.add_logic(game_logic);
-    game.run(GameState::default());
+    game.run(GameState {
+        health_amount: 5,
+        lost: false,
+    })
 }
 
 fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
-    // quit if Q is pressed
-    if engine.keyboard_state.just_pressed(KeyCode::Q) {
-        engine.should_exit = true;
+    const PLAYER_SPEED: f32 = 250.0;
+    const ROAD_SPEED: f32 = 400.0;
+
+    let mut direction = 0.0;
+    if engine.keyboard_state.pressed(KeyCode::Up) {
+        direction += 1.0;
     }
 
-    // keep text near the edges of the screen
-    let offset = ((engine.time_since_startup_f64 * 3.0).cos() * 5.0) as f32;
-    let score = engine.texts.get_mut("score").unwrap();
-    score.translation.x = engine.window_dimensions.x / 2.0 - 80.0;
-    score.translation.y = engine.window_dimensions.y / 2.0 - 30.0;
+    if engine.keyboard_state.pressed(KeyCode::Down) {
+        direction -= 1.0;
+    }
 
-    let high_score = engine.texts.get_mut("high_score").unwrap();
-    high_score.translation.x = engine.window_dimensions.x / 2.0 + 110.0;
-    high_score.translation.y = engine.window_dimensions.y / 2.0 - 30.0 + offset;
+    let player1 = engine.sprites.get_mut("player1").unwrap();
+    player1.translation.y += direction * PLAYER_SPEED * engine.delta_f32;
+    player1.rotation = direction * 0.15;
+    if player1.translation.y < -360.0 || player1.translation.y > 360.0 {
+        game_state.health_amount = 0;
+    }
 
-    // Collisions
-    // engine.show_colliders = true; // requires valid .collider file -> run collider <path> after installing --example collider
+    for sprite in engine.sprites.values_mut() {
+        if sprite.label.starts_with("roadline") {
+            sprite.translation.x -= ROAD_SPEED * engine.delta_f32;
+            if sprite.translation.x < -675.0 {
+                sprite.translation.x += 1500.0;
+            }
+        }
+
+        if sprite.label.starts_with("obstacle") {
+            sprite.translation.x -= ROAD_SPEED * engine.delta_f32;
+            if sprite.translation.x < -800.0 {
+                sprite.translation.x = thread_rng().gen_range(800.00..1600.00);
+                sprite.translation.y = thread_rng().gen_range(-300.00..300.00);
+            }
+        }
+    }
+
+    let health_message = engine.texts.get_mut("health_message").unwrap();
     for event in engine.collision_events.drain(..) {
-        if event.state == CollisionState::Begin && event.pair.one_starts_with("player") {
-            for label in [event.pair.0, event.pair.1] {
-                if label != "player" {
-                    engine.sprites.remove(&label);
-                }
-            }
-            game_state.score += 1;
-            let score = engine.texts.get_mut("score").unwrap();
-            score.value = format!("Score: {}", game_state.score);
-            println!("Current score: {}", game_state.score);
-            if game_state.score > game_state.high_score {
-                game_state.high_score = game_state.score;
-                let high_score = engine.texts.get_mut("high_score").unwrap();
-                high_score.value = format!("High Score: {}", game_state.high_score);
-            }
+        if !event.pair.either_contains("player1") || event.state.is_end() {
+            continue;
+        }
+
+        if game_state.health_amount > 0 {
+            game_state.health_amount -= 1;
+            health_message.value = format!("Health: {}", game_state.health_amount);
+            engine.audio_manager.play_sfx(SfxPreset::Impact2, 0.2);
         }
     }
-
-    let player = engine.sprites.get_mut("player").unwrap();
-
-    // Handle Movement
-    let player = engine.sprites.get_mut("player").unwrap();
-    const MOVEMENT_SPEED: f32 = 100.0;
-    if engine
-        .keyboard_state
-        .pressed_any(&[KeyCode::Up, KeyCode::W])
-    {
-        player.translation.y += MOVEMENT_SPEED * engine.delta_f32;
+    if game_state.health_amount == 0 {
+        game_state.lost = true;
+        let game_over = engine.add_text("game_over", "Game Over!");
+        game_over.font_size = 128.0;
+        engine.audio_manager.stop_music();
+        engine.audio_manager.play_sfx(SfxPreset::Jingle3, 0.5);
     }
-    if engine
-        .keyboard_state
-        .pressed_any(&[KeyCode::Down, KeyCode::S])
-    {
-        player.translation.y -= MOVEMENT_SPEED * engine.delta_f32;
-    }
-    if engine
-        .keyboard_state
-        .pressed_any(&[KeyCode::Left, KeyCode::A])
-    {
-        player.translation.x -= MOVEMENT_SPEED * engine.delta_f32;
-    }
-    if engine
-        .keyboard_state
-        .pressed_any(&[KeyCode::Right, KeyCode::D])
-    {
-        player.translation.x += MOVEMENT_SPEED * engine.delta_f32;
-    }
-
-    // Mouse Events
-    if engine.mouse_state.just_pressed(MouseButton::Left) {
-        if let Some(mouse_location) = engine.mouse_state.location() {
-            let label = format!("ferris{}", game_state.ferris_index);
-            game_state.ferris_index += 1;
-            let ferris = engine.add_sprite(label.clone(), "ferris.png");
-            ferris.translation = mouse_location;
-            ferris.scale = 0.1;
-            ferris.collision = true;
-        }
-    }
-
-    if game_state.spawn_timer.tick(engine.delta).just_finished() {
-        let label = format!("ferris{}", game_state.ferris_index);
-        game_state.ferris_index += 1;
-        let ferris = engine.add_sprite(label.clone(), "ferris.png");
-        ferris.translation.x = thread_rng().gen_range(-550.0..550.0);
-        ferris.translation.y = thread_rng().gen_range(-325.0..325.0);
-        ferris.scale = 0.1;
-        ferris.collision = true;
-    }
-
-    // Reset Score
-    if engine.keyboard_state.just_pressed(KeyCode::F) {
-        game_state.score = 0;
-        let score = engine.texts.get_mut("score").unwrap();
-        score.value = format!("Score: {}", game_state.score);
-    }
-    engine.audio_manager.play_sfx(SfxPreset::Minimize1, 0.1);
 }
