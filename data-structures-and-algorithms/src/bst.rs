@@ -8,7 +8,7 @@ pub struct BinData<T> {
     data: T,
     left: BinTree<T>,
     right: BinTree<T>,
-    h: i8,
+    h: i32,
 }
 
 impl<T> BinData<T> {
@@ -53,7 +53,7 @@ impl<T> BinTree<T> {
         BinTree(None)
     }
 
-    pub fn height(&self) -> i8 {
+    pub fn height(&self) -> i32 {
         match self.0 {
             Some(ref t) => t.h,
             None => 0,

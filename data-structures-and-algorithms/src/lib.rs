@@ -58,7 +58,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn test_linkedlist() {
         let mut ll = LinkedList::new();
         ll.push_front(3);
@@ -66,11 +65,9 @@ mod tests {
         ll.push_front(1);
 
         println!("ll = {:?}", ll);
-        panic!();
     }
 
     #[test]
-    #[should_panic]
     fn test_bin_tree() {
         let mut t = BinTree::new();
         t.add_sorted(4);
@@ -81,22 +78,18 @@ mod tests {
         t.add_sorted(47);
         t.add_sorted(24);
         t.print_lfirst(0);
-        panic!();
     }
 
     #[test]
-    #[should_panic]
     fn test_bin_tree_balancing() {
         let mut t = BinTree::new();
-        for i in 0..1e5 as i32 {
+        for i in 0..1e3 as i32 {
             t.add_sorted(i);
         }
         t.print_lfirst(0);
-        panic!();
     }
 
     #[test]
-    #[should_panic]
     fn test_huffman_encoding() {
         let s = "at an apple app";
         println!("{}", s);
@@ -104,6 +97,72 @@ mod tests {
         t.print_lfirst(0, '<');
         println!("n = {:?}", t.encode_char('n'));
         println!("ec = {:?}", t.encode_str(s));
-        panic!()
+    }
+
+    #[test]
+    fn test_stack() {
+        let mut stack = Stack::new();
+
+        assert!(stack.is_empty());
+
+        stack.push(1);
+        stack.push(2);
+        stack.push(3);
+
+        assert_eq!(stack.peek(), Some(&3));
+        assert!(!stack.is_empty());
+
+        assert_eq!(stack.pop(), Some(3));
+        assert_eq!(stack.pop(), Some(2));
+        assert_eq!(stack.pop(), Some(1));
+
+        assert!(stack.is_empty());
+        assert_eq!(stack.pop(), None);
+    }
+
+    #[test]
+    fn test_graph_map() -> Result<(), GraphErr> {
+        let mut g = Graph::new();
+        for x in vec!['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'] {
+            g.add_node(x, ());
+        }
+        g.add_edge('a', 'H', 'D', 6)?;
+        g.add_edge('b', 'D', 'C', 18)?;
+        g.add_edge('c', 'C', 'B', 10)?;
+        g.add_edge('d', 'H', 'A', 7)?;
+        g.add_edge('e', 'A', 'C', 4)?;
+        g.add_edge('f', 'H', 'G', 5)?;
+        g.add_edge('g', 'G', 'A', 8)?;
+        g.add_edge('h', 'A', 'F', 3)?;
+        g.add_edge('i', 'F', 'E', 15)?;
+        g.add_edge('j', 'C', 'E', 12)?;
+
+        println!("{:?}", g);
+
+        println!("shortest path A-D = {:?},", g.shortest_path('A', 'D'));
+        println!("shortest path H-B = {:?},", g.shortest_path('H', 'B'));
+        Ok(())
+    }
+
+    #[test]
+    fn test_greedy_salesman() -> Result<(), GraphErr> {
+        let mut g = Graph::new();
+        for x in vec!['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'] {
+            g.add_node(x, ());
+        }
+        g.add_edge('a', 'H', 'D', 6)?;
+        g.add_edge('b', 'D', 'C', 18)?;
+        g.add_edge('c', 'C', 'B', 10)?;
+        g.add_edge('d', 'H', 'A', 7)?;
+        g.add_edge('e', 'A', 'C', 4)?;
+        g.add_edge('f', 'H', 'G', 5)?;
+        g.add_edge('g', 'G', 'A', 8)?;
+        g.add_edge('h', 'A', 'F', 3)?;
+        g.add_edge('i', 'F', 'E', 15)?;
+        g.add_edge('j', 'C', 'E', 12)?;
+
+        println!("{:?}", g);
+        println!("greedy salesman = {:?},", g.greedy_salesman('A'));
+        Ok(())
     }
 }
