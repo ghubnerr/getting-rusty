@@ -28,15 +28,15 @@ Just a place for all things Rust... for now
 
 ### Topics Included
 
-- Binary Trees and Balanced Binary Trees
-- Dynamic Programming (simple)
-- Huffman Encoding
-- Graphs and Graph Algorithms
-- Hashmaps (self-implemented)
-- LinkedLists and Doubly Linked Lists
-- Pseudo Random Number Generator
-- Sorting algorithms (Bubble, Merge and Quicksort) -- the latter has a thread-pool impl.
-- Stacks data structure
+- Binary Trees and Balanced Binary Trees [`bst.rs`](./data-structures-and-algorithms/src/bst.rs)
+- Dynamic Programming (simple) [`dp.rs`](./data-structures-and-algorithms/src/dp.rs)
+- Huffman Encoding [`encoding.rs`](./data-structures-and-algorithms/src/encoding.rs)
+- Graphs and Graph Algorithms [`graphs.rs`](./data-structures-and-algorithms/src/graphs.rs)
+- Hashmaps (self-implemented) [`hashmaps.rs`](./data-structures-and-algorithms/src/hashmaps.rs)
+- LinkedLists and Doubly Linked Lists [`linkedlists.rs`](./data-structures-and-algorithms/src/linkedlists.rs)
+- Pseudo Random Number Generator [`rand_gen.rs`](./data-structures-and-algorithms/src/rand_gen.rs)
+- Sorting algorithms (Bubble, Merge and Quicksort) -- the latter has a thread-pool impl. [`sorting.rs`](./data-structures-and-algorithms/src/sorting.rs)
+- Stacks data structure [`stacks.rs`](./data-structures-and-algorithms/src/stacks.rs)
 
 ### Running Tests from `lib.rs`
 
